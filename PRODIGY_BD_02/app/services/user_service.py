@@ -1,4 +1,3 @@
-# app/services/user_service.py
 from uuid import uuid4, UUID
 from app.repositories.user_repository import UserRepository
 from app.domain.models import User

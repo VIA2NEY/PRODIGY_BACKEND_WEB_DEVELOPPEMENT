@@ -1,4 +1,3 @@
-# app/api/v1/user_routes.py
 from fastapi import APIRouter, HTTPException
 from uuid import UUID
 from app.schemas.user import UserCreate, UserUpdate

@@ -1,4 +1,3 @@
-# app/main.py
 from fastapi import FastAPI
 from app.api.user_routes import router as user_router
 from fastapi.responses import HTMLResponse
@@ -49,7 +48,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     """
     return JSONResponse(
         status_code=422,
-        content=response_format(422, "Erreur de validation", exc.errors())
+        content=response_format(422, "Validation error", exc.errors())
     )
 
 @app.get("/", response_class=HTMLResponse)

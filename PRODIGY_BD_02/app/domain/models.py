@@ -1,8 +1,11 @@
-from uuid import UUID
+import uuid
+from sqlalchemy import Column, Integer, String, CHAR
+from app.database.session import Base
 
-class User:
-    def __init__(self, id: UUID, name: str, email: str, age: int):
-        self.id = id
-        self.name = name
-        self.email = email
-        self.age = age
+class User(Base):
+    __tablename__ = "users"
+    
+    id = Column(CHAR(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    name = Column(String(255), nullable=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    age = Column(Integer, nullable=True, default=0)
