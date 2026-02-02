@@ -1,3 +1,5 @@
 pip install fastapi
 pip install uvicorn[standard]
 pip install 'pydantic[email]
+Ou encore
+pip install "fastapi[standard]" uvicorn
