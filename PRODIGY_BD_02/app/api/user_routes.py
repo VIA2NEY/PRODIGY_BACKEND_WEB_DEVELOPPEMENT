@@ -1,19 +1,24 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from uuid import UUID
-from app.schemas.user import UserCreate, UserUpdate
-from app.schemas.response import ApiResponse
+from app.schemas.user import UserCreate, UserDetailResponse, UserListResponse, UserUpdate
 from app.repositories.user_repository import UserRepository
 from app.services.user_service import UserService
+from sqlalchemy.orm import Session
+from app.database.session import get_db
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-repo = UserRepository()
-service = UserService(repo)
+user_repo = UserRepository()
+user_service = UserService(user_repo)
 
 
-@router.get("/{user_id}", response_model=ApiResponse)
-def get_user(user_id: UUID):
-    user = service.get_user(user_id)
+@router.get("/{user_id}", response_model=UserDetailResponse)
+def get_user(
+    user_id: UUID,
+    db: Session = Depends(get_db)
+):
+    
+    user = user_service.get_user(db, user_id)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -23,21 +28,49 @@ def get_user(user_id: UUID):
                 "data": None,
             },
         )
-    return ApiResponse(code=200, message="OK", data=user.__dict__)
+    return UserDetailResponse(code=200, message="OK", data=user.__dict__)
 
 
-@router.post("/", response_model=ApiResponse)
-def create_user(payload: UserCreate):
-    user = service.create_user(**payload.dict())
-    return ApiResponse(
+@router.get("/", response_model=UserListResponse)
+def get_all_users(db: Session = Depends(get_db)):
+
+    
+    users = user_service.get_users(db)
+    if not users:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "code": 404,
+                "message": "Resource not found",
+                "data": [],
+            },
+        )
+    
+    return UserListResponse(code=200, message="OK", data=[user.__dict__ for user in users])
+
+@router.post("/", response_model=UserDetailResponse)
+def create_user(
+    payload: UserCreate,
+    db: Session = Depends(get_db)
+):
+    
+    
+    user = user_service.create_user(db, **payload.dict())
+    return UserDetailResponse(
         code=201,
         message="Utilisateur créé avec succès",
         data=user.__dict__,
     )
 
-@router.put("/{user_id}", response_model=ApiResponse)
-def update_user(user_id: UUID, payload: UserUpdate):
-    user = service.update_user(user_id, payload.dict())
+@router.put("/{user_id}", response_model=UserDetailResponse)
+def update_user(
+    user_id: UUID, 
+    payload: UserUpdate,
+    db: Session = Depends(get_db)
+):
+    
+    
+    user = user_service.update_user(db, user_id, payload)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -47,18 +80,23 @@ def update_user(user_id: UUID, payload: UserUpdate):
                 "data": None,
             },
         )
-    return ApiResponse(code=200, message="Utilisateur mis à jour", data=user.__dict__)
+    return UserDetailResponse(code=200, message="Utilisateur mis à jour", data=user.__dict__)
 
-@router.delete("/{user_id}", response_model=ApiResponse)
-def delete_user(user_id: UUID):
-    user = service.delete_user(user_id)
-    if not user:
+@router.delete("/{user_id}", response_model=UserDetailResponse)
+def delete_user(
+    user_id: str,
+    db: Session = Depends(get_db)
+):
+    
+    try:
+        user_service.delete_user(db, user_id)
+    except Exception as e:
         raise HTTPException(
-            status_code=404,
+            status_code=e.status_code,
             detail={
                 "code": 404,
-                "message": "Resource not found",
+                "message": f"Resource not found\n{e}",
                 "data": None,
             },
         )
-    return ApiResponse(code=200, message="Utilisateur supprimé", data=None)
+    return UserDetailResponse(code=200, message="User delete with success", data=None)

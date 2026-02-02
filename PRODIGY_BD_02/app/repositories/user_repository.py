@@ -1,24 +1,28 @@
-from uuid import UUID
-from typing import Dict
+from sqlalchemy.orm import Session
 from app.domain.models import User
 
 class UserRepository:
-    def __init__(self):
-        self.users: Dict[UUID, User] = {}
 
-    def create(self, user: User):
-        self.users[user.id] = user
+    def create(self, db: Session, user: User):
+        db.add(user)
+        db.commit()
+        db.refresh(user)
         return user
 
-    def get(self, user_id: UUID):
-        return self.users.get(user_id)
+    def get(self, db: Session, user_id: str):
+        return db.query(User).filter(User.id == str(user_id)).first()
 
-    def get_all(self):
-        return list(self.users.values())
+    def get_all(self, db: Session):
+        return db.query(User).all()
 
-    def update(self, user_id: UUID, user: User):
-        self.users[user_id] = user
+    def update(self, db: Session, user: User):
+        db.commit()
+        db.refresh(user)
         return user
 
-    def delete(self, user_id: UUID):
-        return self.users.pop(user_id, None)
+    def delete(self, db: Session, user: User):
+        db.delete(user)
+        db.commit()
+
+    def get_by_email(self, db: Session, email: str):
+        return db.query(User).filter(User.email == email).first()

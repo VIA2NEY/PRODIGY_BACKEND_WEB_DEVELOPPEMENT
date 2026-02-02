@@ -7,7 +7,10 @@ from app.core.config import settings
 engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URI,
     pool_pre_ping=True,
-    pool_recycle=300
+    pool_size=10, #Pool de 10 connexions
+    max_overflow=20, #Overflow jusqu’à 20
+    pool_timeout=30, #Timeout 30s
+    pool_recycle=1800, #Recycle connexions MySQL (évite “MySQL server has gone away”)
 )
 
 # Factory de sessions
