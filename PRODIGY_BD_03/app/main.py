@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api.user_routes import router as user_router
+from app.api.auth_routes import router as auth_router
 from fastapi.responses import HTMLResponse
 
 
@@ -13,6 +14,8 @@ from app.core.exceptions import response_format
 app = FastAPI(title="Users API")
 
 app.include_router(user_router)
+
+app.include_router(auth_router)
 
 
 @app.exception_handler(StarletteHTTPException)

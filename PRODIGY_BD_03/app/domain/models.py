@@ -9,3 +9,8 @@ class User(Base):
     name = Column(String(255), nullable=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     age = Column(Integer, nullable=True, default=0)
+    
+    password_hash = Column(String(255), nullable=False)
+
+    role = Column(String(50), nullable=False, default="user")
+    # roles possibles : user | admin | owner

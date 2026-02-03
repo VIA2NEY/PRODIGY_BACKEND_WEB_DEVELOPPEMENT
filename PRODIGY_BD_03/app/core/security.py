@@ -2,7 +2,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import HTTPException, status
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.core.config import settings
@@ -10,6 +10,9 @@ from app.core.config import settings
 # Configuration
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
+
+def get_current_user(credentials = Depends(security)):
+    return verify_token(credentials)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Vérifier un mot de passe"""
@@ -38,16 +41,29 @@ def verify_token(credentials: HTTPAuthorizationCredentials) -> dict:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         username: str = payload.get("sub")
         user_id: int = payload.get("user_id")
-        if username is None or user_id is None:
+        role: str = payload.get("role")
+        if username is None or user_id is None or role is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token invalide",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        return {"username": username, "user_id": user_id}
+        return {"username": username, "user_id": user_id, "role": role,}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token invalide",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+def require_roles(*require_roles: str):
+    def role_checker(current_user = Depends(get_current_user)):
+        if current_user["role"] not in require_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Access forbidden",
+            )
+        return current_user
+
+    return role_checker
