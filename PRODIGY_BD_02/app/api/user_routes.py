@@ -88,15 +88,6 @@ def delete_user(
     db: Session = Depends(get_db)
 ):
     
-    try:
-        user_service.delete_user(db, user_id)
-    except Exception as e:
-        raise HTTPException(
-            status_code=e.status_code,
-            detail={
-                "code": 404,
-                "message": f"Resource not found\n{e}",
-                "data": None,
-            },
-        )
+    user_service.delete_user(db, user_id)
+    
     return UserDetailResponse(code=200, message="User delete with success", data=None)

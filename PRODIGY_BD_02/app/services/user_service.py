@@ -42,7 +42,7 @@ class UserService:
     def delete_user(self, db: Session, user_id: str):
         user = self.repository.get(db, user_id)
         if not user:
-            return None
+            return raise_exception(404, "Resource not found")
 
         self.repository.delete(db, user)
         # return user
