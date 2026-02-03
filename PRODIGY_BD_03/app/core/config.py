@@ -3,14 +3,14 @@ import os
 
 # load_dotenv()
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 
 class Settings:
 
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
+        f"sqlite:///{os.path.join(basedir, 'app.db')}"
         
     # JWT Configuration
     SECRET_KEY: str = os.environ.get('SECRET_KEY') or "super-secret-key-minimum-32-characters"

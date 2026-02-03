@@ -48,19 +48,19 @@ def get_all_users(db: Session = Depends(get_db)):
     
     return UserListResponse(code=200, message="OK", data=[user.__dict__ for user in users])
 
-@router.post("/", response_model=UserDetailResponse)
-def create_user(
-    payload: UserCreate,
-    db: Session = Depends(get_db)
-):
+# @router.post("/", response_model=UserDetailResponse)
+# def create_user(
+#     payload: UserCreate,
+#     db: Session = Depends(get_db)
+# ):
     
     
-    user = user_service.create_user(db, **payload.dict())
-    return UserDetailResponse(
-        code=201,
-        message="Utilisateur créé avec succès",
-        data=user.__dict__,
-    )
+#     user = user_service.create_user(db, **payload.dict())
+#     return UserDetailResponse(
+#         code=201,
+#         message="Utilisateur créé avec succès",
+#         data=user.__dict__,
+#     )
 
 @router.put("/{user_id}", response_model=UserDetailResponse)
 def update_user(

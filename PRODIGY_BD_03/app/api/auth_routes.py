@@ -12,7 +12,6 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 repository = UserRepository()
 service = AuthService(repository)
 
-# @router.post("/register", response_model=ApiResponse)
 @router.post("/register", response_model=RegisterDetailResponse)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     user = service.register(db, payload)
@@ -21,12 +20,7 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
             status_code=400,
             detail={"code": 400, "message": "Email already exists", "data": None},
         )
-
-    # return ApiResponse(
-    #     code=201,
-    #     message="User registered successfully",
-    #     data={"id": user.id, "email": user.email},
-    # )
+    
     return RegisterDetailResponse(
         code=201,
         message="User registered successfully",

@@ -16,10 +16,10 @@ class AuthService:
 
         user = User(
             email=data.email,
-            # password_hash=get_password_hash(data.password),
+            password_hash=get_password_hash(data.password),
             name=data.name,
             age=data.age,
-            # role="user",
+            role="user",
         )
         return self.repository.create(db, user)
 

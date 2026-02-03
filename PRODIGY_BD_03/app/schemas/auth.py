@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 
 from app.schemas.response import ApiResponse
+from app.schemas.user import UserResponse
 
 class RegisterRequest(BaseModel):
     email: EmailStr
@@ -23,5 +24,5 @@ class TokenDetailResponse(ApiResponse[TokenResponse]):
     pass
 
 
-class RegisterDetailResponse(ApiResponse[RegisterRequest]):
+class RegisterDetailResponse(ApiResponse[UserResponse]):
     pass
