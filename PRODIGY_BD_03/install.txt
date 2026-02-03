@@ -1,0 +1,3 @@
+pip install fastapi 'pydantic[email]' uvicorn sqlalchemy alembic pymysql
+pip install python-jose[cryptography]
+pip install passlib[bcrypt]

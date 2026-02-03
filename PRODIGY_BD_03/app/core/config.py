@@ -11,6 +11,10 @@ class Settings:
 
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
-
+        
+    # JWT Configuration
+    SECRET_KEY: str = os.environ.get('SECRET_KEY') or "super-secret-key-minimum-32-characters"
+    ALGORITHM: str = os.environ.get('ALGORITHM')
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES') or 60
 
 settings = Settings()

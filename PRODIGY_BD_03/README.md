@@ -1,16 +1,17 @@
-# Task-02
+# Task-03
 
-## Persistent Storage with Database Integration
+## JWT-Based Authentication & Authorization
 
 ### Description
 
-Extend the previous REST API to use a relational database (e.g., MySQL, MongoDB) for persistent storage.
+Implement authentication and authorization using **JSON Web Tokens (JWT)**.
 
 ### Requirements
 
-- Integrate a **SQL or NoSQL database** using an **ORM/ODM**.
-- Use **database migrations** if required to create the `users` table with the appropriate schema.
-- Implement **connection pooling** and **environment-specific configurations** using `.env` files.
-- Use **environment variables** for database credentials.
+- Add **user registration** and **login** endpoints.
+- Store **hashed passwords** using a library such as **bcrypt**.
+- On successful login, **generate and return a JWT token** to the client.
+- Protect certain routes (e.g., `/users` or `/profile`) so they are accessible **only by authenticated users** using the JWT token.
+- Implement **role-based access control (RBAC)** (e.g., `admin`, `user`, `owner`) to restrict access to specific endpoints.
 
 ---
