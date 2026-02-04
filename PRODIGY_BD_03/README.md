@@ -15,3 +15,9 @@ Implement authentication and authorization using **JSON Web Tokens (JWT)**.
 - Implement **role-based access control (RBAC)** (e.g., `admin`, `user`, `owner`) to restrict access to specific endpoints.
 
 ---
+
+# RESTE A FAIRE
+- Refresh tokens
+- Logout
+- dynamic registration for each role
+- test
