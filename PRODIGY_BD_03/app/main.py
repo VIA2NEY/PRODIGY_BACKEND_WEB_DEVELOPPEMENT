@@ -19,21 +19,38 @@ app.include_router(auth_router)
 
 
 @app.exception_handler(StarletteHTTPException)
-async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):  
     """
-    Custom exception handler for StarletteHTTPException.
+    Custom HTTP exception handler.
 
-    This function will be called whenever a StarletteHTTPException is raised.
-    It will return a JSONResponse with the status code, message and data
-    from the exception.
+    This function is called whenever a HTTP exception is raised.
+    It will return a standardized JSONResponse with the status code, message and data from the exception.
+    If the exception detail is a dictionary, it will use the keys "message" and "data" to format the response.
+    Otherwise, it will use the exception detail as the message and None as the data.
 
     :param request: The current request
     :param exc: The exception that was raised
-    :return: A JSONResponse with the exception details
+    :return: A standardized JSONResponse with the exception details
     """
+    if isinstance(exc.detail, dict):
+        # Cas standard (TON format)
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=response_format(
+                exc.status_code,
+                exc.detail.get("message", "Error"),
+                exc.detail.get("data"),
+            ),
+        )
+
+    # Cas FastAPI / HTTPBearer / erreurs natives
     return JSONResponse(
         status_code=exc.status_code,
-        content=response_format(exc.status_code, exc.detail["message"], exc.detail.get("data"))
+        content=response_format(
+            exc.status_code,
+            exc.detail,  # ex: "Not authenticated"
+            None,
+        ),
     )
 
 @app.exception_handler(RequestValidationError)

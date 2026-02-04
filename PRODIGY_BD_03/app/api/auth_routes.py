@@ -34,7 +34,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     if not token:
         raise HTTPException(
             status_code=401,
-            detail={"code": 401, "message": "Invalid credentials", "data": None},
+            detail={"code": 401, "message": "Login or Password Incorect", "data": None},
         )
 
     return ApiResponse(

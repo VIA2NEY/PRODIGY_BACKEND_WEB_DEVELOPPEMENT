@@ -45,14 +45,22 @@ def verify_token(credentials: HTTPAuthorizationCredentials) -> dict:
         if username is None or user_id is None or role is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token invalide",
+                detail={
+                    "code": 401,
+                    "message": "Token invalide",
+                    "data": None,
+                },
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return {"username": username, "user_id": user_id, "role": role,}
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token invalide",
+            detail={
+                "code": 401,
+                "message": "Token invalide or expired",
+                "data": None,
+            },
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -62,7 +70,11 @@ def require_roles(*require_roles: str):
         if current_user["role"] not in require_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Access forbidden",
+                detail={
+                    "code": 403,
+                    "message": "Access forbidden",
+                    "data": None,
+                },
             )
         return current_user
 
