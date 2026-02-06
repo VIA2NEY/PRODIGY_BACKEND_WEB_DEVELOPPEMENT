@@ -56,8 +56,7 @@ def get_user(
 
 
 @router.get("/", response_model=UserListResponse)
-def get_all_users(db: Session = Depends(get_db)):
-# def get_all_users(db: Session = Depends(get_db), current_user = Depends(require_roles("admin", "owner"))):
+def get_all_users(db: Session = Depends(get_db), current_user = Depends(require_roles("admin", "owner"))):
 
     
     users = user_service.get_users(db)
