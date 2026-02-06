@@ -1,0 +1,27 @@
+timelookup:  %{time_namelookup}\n
+       time_connect:  %{time_connect}\n
+    time_appconnect:  %{time_appconnect}\n
+   time_pretransfer:  %{time_pretransfer}\n
+      time_redirect:  %{time_redirect}\n
+ time_starttransfer:  %{time_starttransfer}\n
+                    ----------\n
+         time_total:  %{time_total}\n
+
+
+
+Measure performance request time Before redis
+
+curl.exe -o NUL -s -w "Temps total: %{time_total}s\n" http://localhost:8000/users
+Temps total: 0.292661s
+
+
+curl -L -o /dev/null -s -w "
+   DNS Lookup:      %{time_namelookup}s
+   Connect:         %{time_connect}s
+   App Connect:     %{time_appconnect}s
+   Pre-transfer:    %{time_pretransfer}s
+   Start Transfer:  %{time_starttransfer}s
+   -------------------------
+   Total:           %{time_total}s
+\n" http://localhost:8000/users
+   DNS Lookup:      0.000046s   Connect:         0.220775s   App Connect:     0.000000s   Pre-transfer:    0.221447s   Start Transfer:  0.338808s   -------------------------   Total:           0.339023s
