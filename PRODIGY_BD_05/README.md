@@ -79,3 +79,79 @@ This mini-project focuses on backend fundamentals such as authentication, relati
 
 ## Notes
 This project builds upon previous tasks by introducing more complex business logic, data relationships, and security considerations while maintaining clean architecture principles.
+
+---
+
+# APP ARCHITECTURE
+
+```
+├── alembic/ 
+│   ├── env.py
+│   └── ...
+│
+├── app/
+│   ├── main.py
+│   │
+│   ├── api/
+│   │   ├── router.py              # Inclut v1 et v2
+│   │   │
+│   │   ├── v1/
+│   │   │   ├── dependencies.py
+│   │   │   ├── schemas/
+│   │   │   └── routes/
+│   │   │       ├── auth.py
+│   │   │       ├── users.py
+│   │   │       ├── hotels.py
+│   │   │       ├── rooms.py
+│   │   │       └── bookings.py
+│   │   │
+│   │   └── v2/
+│   │       ├── dependencies.py
+│   │       └── routes/
+│   │           ├── hotels.py
+│   │           └── bookings.py
+│   │
+│   ├── application/
+│   │   └── services/
+│   │       ├── v1/
+│   │       │   ├── auth_service.py
+│   │       │   ├── hotel_service.py
+│   │       │   └── booking_service.py
+│   │       │
+│   │       └── v2/
+│   │       ├── hotel_service.py   # logique différente
+│   │       └── booking_service.py
+│   │
+│   ├── infrastructure/
+│   │   ├── database/
+│   │   │   ├── session.py
+│   │   │   └── base.py
+│   │   │
+│   │   └── repositories/
+│   │       ├── user_repository.py
+│   │       ├── hotel_repository.py
+│   │       └── booking_repository.py
+│   │
+│   ├── domain/
+│   │   └── models/
+│   │
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   ├── redis.py
+│   │   └── exceptions.py
+│   │
+│   ├── utils/
+│   │   └── response.py
+│   │
+│   └── tests/
+│       ├── v1/
+│       └── v2/
+│
+│
+├── requirements.txt
+├── alembic.ini
+├── ...
+└── README.md
+
+```
