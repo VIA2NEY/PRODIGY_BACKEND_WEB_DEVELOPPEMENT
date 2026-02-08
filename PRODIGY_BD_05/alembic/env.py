@@ -5,6 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
+import sys
+sys.path.append(".")
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -18,7 +21,19 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+
+# 👉 IMPORT OBLIGATOIRE DES MODELS
+# Sinon Alembic ne détecte rien
+from app.infrastructure.database.base import Base
+from app.core.config import settings
+
+# ⚠️ Importer tous les modèles pour le metadata
+from app.domain.models.users import User
+from app.domain.models.hotels import Hotel
+from app.domain.models.rooms import Room
+from app.domain.models.booking import Booking
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -70,6 +85,42 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
+
+
+# def run_migrations_offline() -> None:
+#     url = settings.SQLALCHEMY_DATABASE_URI
+#     context.configure(
+#         url=url,
+#         target_metadata=target_metadata,
+#         literal_binds=True,
+#         dialect_opts={"paramstyle": "named"},
+#         compare_type=True,
+#     )
+
+#     with context.begin_transaction():
+#         context.run_migrations()
+
+
+# def run_migrations_online() -> None:
+#     configuration = config.get_section(config.config_ini_section)
+
+#     configuration["sqlalchemy.url"] = settings.SQLALCHEMY_DATABASE_URI
+
+#     connectable = engine_from_config(
+#         configuration,
+#         prefix="sqlalchemy.",
+#         poolclass=pool.NullPool,
+#     )
+
+#     with connectable.connect() as connection:
+#         context.configure(
+#             connection=connection,
+#             target_metadata=target_metadata,
+#             compare_type=True,
+#         )
+
+#         with context.begin_transaction():
+#             context.run_migrations()
 
 
 if context.is_offline_mode():
