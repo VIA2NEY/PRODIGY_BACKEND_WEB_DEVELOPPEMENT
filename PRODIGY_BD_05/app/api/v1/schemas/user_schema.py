@@ -13,7 +13,9 @@ class UserResponse(BaseModel):
     id: UUID
     email: EmailStr
     role: str
+    is_active: bool
     created_at: datetime
+    updated_at: datetime | None
 
     class Config:
         orm_mode = True

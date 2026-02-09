@@ -1,25 +1,23 @@
 from app.domain.models.users import User
-
+from sqlalchemy.orm import Session
 
 class UserRepository:
-    def __init__(self, db):
-        self.db = db
 
-    def get_by_email(self, email: str):
-        return self.db.query(User).filter(User.email == email).first()
+    def get_by_email(self, db: Session, email: str):
+        return db.query(User).filter(User.email == email).first()
 
-    def create(self, user: User):
-        self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
+    def create(self, db: Session, user: User):
+        db.add(user)
+        db.commit()
+        db.refresh(user)
         return user
 
-    def update(self, user: User):
-        self.db.add(user)
-        self.db.commit()
-        self.db.refresh(user)
+    def update(self, db: Session, user: User):
+        db.add(user)
+        db.commit()
+        db.refresh(user)
         return user
     
-    def delete(self, user: User):
-        self.db.delete(user)
-        self.db.commit()
+    def delete(self, db: Session, user: User):
+        db.delete(user)
+        db.commit()
