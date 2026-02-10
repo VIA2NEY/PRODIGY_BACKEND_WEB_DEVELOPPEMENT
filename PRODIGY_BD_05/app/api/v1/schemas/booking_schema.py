@@ -19,7 +19,7 @@ class BookingResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class BookingUpdate(BaseModel):
     check_in_date: date

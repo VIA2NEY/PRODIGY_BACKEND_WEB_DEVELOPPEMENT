@@ -13,8 +13,8 @@ def get_auth_service():
     return AuthService(UserRepository())
 
 @router.post("/register", response_model=RegisterDetailResponse)
-def register(payload: LoginRequest, role: Optional[str] = "user", service=Depends(get_auth_service)):
-    user = service.register(payload.email, payload.password, role)
+def register(payload: LoginRequest, role: Optional[str] = "user", service=Depends(get_auth_service), db: Session = Depends(get_db)):
+    user = service.register(db, payload.email, payload.password, role)
     if not user:
         raise HTTPException(
             status_code=400,
@@ -24,7 +24,7 @@ def register(payload: LoginRequest, role: Optional[str] = "user", service=Depend
     return RegisterDetailResponse(
         code=201,
         message="User registered successfully",
-        data=user.__dict__,
+        data=user,
     )
 
 @router.post("/login", response_model=TokenDetailResponse)

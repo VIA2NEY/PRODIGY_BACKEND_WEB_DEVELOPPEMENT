@@ -9,6 +9,11 @@ class HotelCreate(BaseModel):
     description: str | None = None
     address: str
 
+class HotelUpdate(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    address: str | None = None
+
 class HotelResponse(BaseModel):
     id: UUID
     name: str
@@ -18,7 +23,7 @@ class HotelResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 

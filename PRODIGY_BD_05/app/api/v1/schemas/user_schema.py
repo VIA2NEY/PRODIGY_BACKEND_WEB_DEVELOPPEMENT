@@ -18,7 +18,7 @@ class UserResponse(BaseModel):
     updated_at: datetime | None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserLogin(BaseModel):
     email: EmailStr
