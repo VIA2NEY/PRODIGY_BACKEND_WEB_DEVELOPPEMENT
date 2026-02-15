@@ -10,11 +10,13 @@ class BookingRepository:
             or_(
                 and_(
                     Booking.check_in_date <= check_in,
-                    Booking.check_out_date > check_in
+                    Booking.check_out_date > check_in,
+                    Booking.status == "confirmed"
                 ),
                 and_(
                     Booking.check_in_date < check_out,
-                    Booking.check_out_date >= check_out
+                    Booking.check_out_date >= check_out,
+                    Booking.status == "confirmed"
                 )
             )
         ).first()

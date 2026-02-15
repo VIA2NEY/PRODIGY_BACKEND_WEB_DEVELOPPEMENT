@@ -1,6 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
-from app.api.v1.schemas.auth_shema import LoginRequest, RegisterDetailResponse, TokenDetailResponse
+from app.api.v1.schemas.auth_shema import LoginRequest, RegisterDetailResponse, TokenDetailResponse, UserRole
 from app.application.services.v1.auth_service import AuthService
 from app.infrastructure.repositories.user_repository import UserRepository
 from app.infrastructure.database.session import get_db
@@ -13,7 +13,7 @@ def get_auth_service():
     return AuthService(UserRepository())
 
 @router.post("/register", response_model=RegisterDetailResponse)
-def register(payload: LoginRequest, role: Optional[str] = "user", service=Depends(get_auth_service), db: Session = Depends(get_db)):
+def register(payload: LoginRequest, role: UserRole = UserRole.USER, service=Depends(get_auth_service), db: Session = Depends(get_db)):
     user = service.register(db, payload.email, payload.password, role)
     if not user:
         raise HTTPException(
