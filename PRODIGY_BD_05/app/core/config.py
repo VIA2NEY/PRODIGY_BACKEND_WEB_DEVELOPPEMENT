@@ -19,4 +19,11 @@ class Settings:
     # Pagination
     POSTS_PER_PAGE : int = 10
 
+    # Redis
+    REDIS_HOST: str = os.environ.get("REDIS_HOST", "localhost")
+    REDIS_PORT: int = int(os.environ.get("REDIS_PORT", 6379))
+    REDIS_DB: int = int(os.environ.get("REDIS_DB", 0))
+    REDIS_CACHE_EXPIRE: int = 120  # seconds
+
+
 settings = Settings()
