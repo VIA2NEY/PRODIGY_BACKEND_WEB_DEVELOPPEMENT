@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
 from uuid import UUID
 from datetime import date, datetime
 
@@ -18,7 +18,6 @@ class BookingCreate(BaseModel):
                 status_code=422,
                 detail={"code": 422, "message": f"Dates cannot be in the past, try again from {date.today()} ", "data": None},
             )
-            # raise ValueError("Dates cannot be in the past")
         return value
 
 class BookingResponse(BaseModel):
@@ -30,8 +29,7 @@ class BookingResponse(BaseModel):
     status: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class BookingUpdate(BaseModel):
     check_in_date: date
