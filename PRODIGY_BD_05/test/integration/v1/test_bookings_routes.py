@@ -79,14 +79,25 @@ def test_booking_success(client, user_token, owner_token):
     )
     assert res.status_code == 200
 
+def test_booking_in_the_past(client, user_token):
+    res = client.post(
+        "/v1/bookings",
+        json={
+            "room_id": "11111111-1111-1111-1111-111111111111",
+            "check_in_date": str(date.today() - timedelta(days=1)),
+            "check_out_date": str(date.today() + timedelta(days=3)),
+        },
+        headers={"Authorization": f"Bearer {user_token}"}
+    )
+    assert res.status_code == 422
 
 def test_booking_room_not_found(client, user_token):
     res = client.post(
         "/v1/bookings",
         json={
             "room_id": "11111111-1111-1111-1111-111111111111",
-            "check_in_date": "2026-05-10",
-            "check_out_date": "2026-05-15",
+            "check_in_date": str(date.today() + timedelta(days=20)),
+            "check_out_date": str(date.today() + timedelta(days=25)),
         },
         headers={"Authorization": f"Bearer {user_token}"}
     )
