@@ -144,14 +144,52 @@ This project builds upon previous tasks by introducing more complex business log
 │   ├── utils/
 │   │   └── response.py
 │   │
-│   └── tests/
-│       ├── v1/
-│       └── v2/
 │
-│
+├── tests/
+|   │
+|   ├── conftest.py          # config globale pytest
+|   │
+|   ├── unit/
+|   │   ├── test_auth_service.py
+|   │   ├── test_hotel_service.py
+|   │   └── test_booking_service.py
+|   │
+|   ├── integration/
+|   │   ├── v1/
+|   │   │   ├── test_auth_routes.py
+|   │   │   ├── test_bookings_routes.py
+|   │   │   └── test_hotels_routes.py
+|   │   │
+|   │   └── v2/
+|   │       ├── ...
+|   │       └── ...
+|   │
+|   └── e2e/
+|       └── test_full_booking_flow.py 
 ├── requirements.txt
 ├── alembic.ini
 ├── ...
 └── README.md
 
+```
+
+## EFFECTUER LES TESTS
+- Test Simples
+```bash
+pytest -v
+```
+
+- Test avec Coverage :
+```
+pytest --cov=app --cov-report=term-missing
+```
+
+- Test avec Coverage HTML :
+```
+pytest --cov=app --cov-report=html
+```
+
+- Test simple avec HTML :
+```
+pytest --cov=app --cov-report=html -v
 ```
