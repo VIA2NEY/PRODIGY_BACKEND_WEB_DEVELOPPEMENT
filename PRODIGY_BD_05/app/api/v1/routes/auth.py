@@ -1,4 +1,3 @@
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.v1.schemas.auth_shema import LoginRequest, RegisterDetailResponse, TokenDetailResponse, UserRole
 from app.application.services.v1.auth_service import AuthService

@@ -1,5 +1,4 @@
-import redis
-import json
+from redis import Redis
 from app.core.config import settings
 
 
@@ -9,7 +8,7 @@ class RedisClient:
     @classmethod
     def get_instance(cls):
         if cls._instance is None:
-            cls._instance = redis.Redis(
+            cls._instance = Redis(
                 host=settings.REDIS_HOST,
                 port=settings.REDIS_PORT,
                 db=settings.REDIS_DB,

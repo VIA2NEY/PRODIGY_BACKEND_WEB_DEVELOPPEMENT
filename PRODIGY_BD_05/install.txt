@@ -2,3 +2,4 @@ pip install fastapi 'pydantic[email]' uvicorn sqlalchemy alembic pymysql
 pip install python-jose[cryptography]
 pip install passlib[bcrypt]==1.7.4 bcrypt==4.2.0
 pip install redis
+pip install pytest pytest-asyncio httpx pytest-cov
