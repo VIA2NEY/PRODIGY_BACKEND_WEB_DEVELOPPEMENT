@@ -32,7 +32,7 @@ class BookingService:
         )
 
         if conflict:
-            raise HTTPException(status_code=400, detail="Booking conflict, room unavailable")
+            raise HTTPException(status_code=400, detail="Booking conflict, ")
 
         booking = Booking(
             user_id=uuid.UUID(user_id),
