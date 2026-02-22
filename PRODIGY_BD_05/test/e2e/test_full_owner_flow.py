@@ -27,25 +27,12 @@ GOAL
 """
 
 from fastapi.testclient import TestClient
+from datetime import date, timedelta
 
 
-def register_and_login(client: TestClient, email: str, role: str):
-    password = "StrongPassword123!"
-    client.post(f"/v1/auth/register?role={role.lower()}", json={
-        "email": email,
-        "password": password
-    })
-    response = client.post("/v1/auth/login", json={
-        "email": email,
-        "password": password
-    })
-    token = response.json()["data"]["access_token"]
-    return {"Authorization": f"Bearer {token}"}
+def test_full_owner_flow(client: TestClient, register_and_login):
 
-
-def test_full_owner_flow(client: TestClient):
-
-    owner_headers = register_and_login(client, "owner@test.com", "owner")
+    owner_headers = register_and_login("owner@test.com", "owner")
 
     # Create hotel
     hotel = client.post(
@@ -92,8 +79,8 @@ def test_full_owner_flow(client: TestClient):
         "/v1/bookings",
         json={
             "room_id": room_id,
-            "check_in_date": "2026-07-01",
-            "check_out_date": "2026-07-03"
+            "check_in_date": str(date.today() + timedelta(days=10)),
+            "check_out_date": str(date.today() + timedelta(days=13))
         },
         headers=owner_headers
     )

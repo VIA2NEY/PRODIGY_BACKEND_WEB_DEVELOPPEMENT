@@ -125,21 +125,6 @@ def client(db):
 # AUTH FIXTURES
 # ----------------------
 
-# def create_user(db, role="user"):
-#     email = f"{role}_{uuid.uuid4()}@test.com"
-#     password = "123456"
-
-#     user = User(
-#         email=email,
-#         hashed_password=get_password_hash(password),
-#         role=role,
-#     )
-#     db.add(user)
-#     db.commit()
-#     db.refresh(user)
-
-#     return email, password
-
 @pytest.fixture
 def create_user(db):
     def _create_user(role="user"):
@@ -185,3 +170,67 @@ def admin_token(client, create_user):
     })
     return res.json()["data"]["access_token"]
 
+@pytest.fixture
+def register_and_login(client: TestClient):
+    def _register_and_login(email: str, role: str):
+        password = "StrongPassword123!"
+        client.post(f"/v1/auth/register?role={role.lower()}", json={
+            "email": email,
+            "password": password
+        })
+        response = client.post("/v1/auth/login", json={
+            "email": email,
+            "password": password
+        })
+        token = response.json()["data"]["access_token"]
+        return {"Authorization": f"Bearer {token}"}
+    return _register_and_login
+
+@pytest.fixture
+def hotel_with_room(client, register_and_login):
+    """
+    Crée un owner + hotel + room
+    Retourne:
+        {
+            "owner_headers": ...,
+            "hotel_id": ...,
+            "room_id": ...
+        }
+    """
+    owner_headers = register_and_login(
+        f"owner_DryTest@test.com",
+        "owner"
+    )
+
+    hotel = client.post(
+        "/v1/hotels",
+        json={
+            "name": "Test Hotel",
+            "description": "Test Description",
+            "address": "Abidjan"
+        },
+        headers=owner_headers
+    )
+    hotel_id = hotel.json()["data"]["id"]
+
+    assert hotel.status_code == 200
+
+    room = client.post(
+        f"/v1/rooms/hotel/{hotel_id}",
+        json={
+            "title": "Room 101",
+            "description": "Nice",
+            "price_per_night": 80,
+            "capacity": 2
+        },
+        headers=owner_headers
+    )
+    assert room.status_code == 200
+
+    room_id = room.json()["data"]["id"]
+
+    return {
+        "owner_headers": owner_headers,
+        "hotel_id": hotel_id,
+        "room_id": room_id
+    }

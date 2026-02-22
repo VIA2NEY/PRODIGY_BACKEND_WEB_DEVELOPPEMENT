@@ -24,48 +24,18 @@ RBAC RESTRICTIONS VALIDATED
 ❌ User cannot delete room
 """
 
-
 from fastapi.testclient import TestClient
 from datetime import date, timedelta
 
 
-def register_and_login(client: TestClient, email: str, role: str):
-    password = "StrongPassword123!"
-    client.post(f"/v1/auth/register?role={role.lower()}", json={
-        "email": email,
-        "password": password
-    })
-    response = client.post("/v1/auth/login", json={
-        "email": email,
-        "password": password
-    })
-    token = response.json()["data"]["access_token"]
-    return {"Authorization": f"Bearer {token}"}
+def test_full_user_flow(client: TestClient, register_and_login, hotel_with_room):
 
-
-def test_full_user_flow(client: TestClient):
-
-    # Create owner to create hotel
-    owner_headers = register_and_login(client, "owner_for_user@test.com", "owner")
-
-    hotel = client.post(
-        "/v1/hotels",
-        json={"name": "Hotel Public", "description": "Owner descrip", "address": "Abidjan"},
-        headers=owner_headers
-    )
-    assert hotel.status_code == 200
-    hotel_id = hotel.json()["data"]["id"]
-
-    room = client.post(
-        f"/v1/rooms/hotel/{hotel_id}",
-        json={"title": "Room 101", "description": "Nice", "price_per_night": 80, "capacity": 2},
-        headers=owner_headers
-    )
-    assert room.status_code == 200
-    room_id = room.json()["data"]["id"]
+    # Create owner to create hotel and room
+    hotel_id = hotel_with_room["hotel_id"]
+    room_id = hotel_with_room["room_id"]
 
     # Now login as USER
-    headers = register_and_login(client, "user@test.com", "user")
+    headers = register_and_login("user@test.com", "user")
 
     hotels = client.get("/v1/hotels")
     assert hotels.status_code == 200

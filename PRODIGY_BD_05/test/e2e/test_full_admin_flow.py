@@ -32,29 +32,11 @@ GOAL
 """
 
 from fastapi.testclient import TestClient
+from datetime import date, timedelta
 
+def test_full_admin_flow(client: TestClient, register_and_login):
 
-def register_and_login(client: TestClient, email: str, role: str):
-    password = "StrongPassword123!"
-
-    client.post(f"/v1/auth/register?role={role.lower()}", json={
-        "email": email,
-        "password": password
-    })
-
-    response = client.post("/v1/auth/login", json={
-        "email": email,
-        "password": password
-    })
-    
-    assert response.status_code == 200
-    token = response.json()["data"]["access_token"]
-    return {"Authorization": f"Bearer {token}"}
-
-
-def test_full_admin_flow(client: TestClient):
-
-    admin_headers = register_and_login(client, "admin@test.com", "admin")
+    admin_headers = register_and_login("admin@test.com", "admin")
 
     # Create hotel
     hotel = client.post(
@@ -82,7 +64,7 @@ def test_full_admin_flow(client: TestClient):
     assert room.status_code in [401, 403, 405]
     
     # Create OWNER hotel and room create
-    owner_headers = register_and_login(client, "owner_block@test.com", "owner")
+    owner_headers = register_and_login("owner_block@test.com", "owner")
 
     owner_hotel = client.post(
         "/v1/hotels",
@@ -105,8 +87,8 @@ def test_full_admin_flow(client: TestClient):
         "/v1/bookings",
         json={
             "room_id": room_id,
-            "check_in_date": "2026-06-01",
-            "check_out_date": "2026-06-05"
+            "check_in_date": str(date.today() + timedelta(days=1)),
+            "check_out_date": str(date.today() + timedelta(days=3))
         },
         headers=admin_headers
     )
