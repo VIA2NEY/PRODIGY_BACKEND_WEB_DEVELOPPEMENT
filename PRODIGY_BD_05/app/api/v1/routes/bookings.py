@@ -28,7 +28,7 @@ def create_booking(
         data=booking
     )
 
-@router.patch("/{booking_id}/cancel", response_model=BookingDetailResponse, dependencies=[Depends(require_roles("user"))])
+@router.patch("/{booking_id}/cancel", response_model=BookingDetailResponse, dependencies=[Depends(require_roles("user", "owner", "admin"))])
 def cancel_booking(
     booking_id: str,
     db: Session = Depends(get_db),

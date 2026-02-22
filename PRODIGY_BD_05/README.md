@@ -165,7 +165,11 @@ This project builds upon previous tasks by introducing more complex business log
 |   │       └── ...
 |   │
 |   └── e2e/
-|       └── test_full_booking_flow.py 
+|   │   ├── test_full_admin_flow.py
+|   │   ├── test_full_owner_flow.py
+|   │   ├── test_full_user_flow.py
+|   │   └── test_full_visitor_flow.py
+
 ├── requirements.txt
 ├── alembic.ini
 ├── ...
@@ -193,3 +197,29 @@ pytest --cov=app --cov-report=html
 ```
 pytest --cov=app --cov-report=html -v
 ```
+
+- Test d'ensemble specifique:
+```
+pytest -k e2e -v
+```
+ou 
+```
+pytest -k integration -v
+```
+## COMMON HTTP RESPONSE CODES
+
+
+<details>
+<summary>HTTP Status Codes in FastAPI</summary>
+
+| Status Code | Name               | Description                                                                 | When to use in FastAPI                                             |
+|-------------|--------------------|-----------------------------------------------------------------------------|--------------------------------------------------------------------|
+| 400         | Bad Request        | The server cannot process the request due to invalid client-side syntax or general errors.  | For generic client errors not covered by 422 validation errors.   |
+| 401         | Unauthorized       | The client must authenticate to get the requested response.               | When authentication credentials are missing or invalid.           |
+| 403         | Forbidden          | The client does not have permission to access the content, even with authentication.                | For authorization (permissions) issues.                           |
+| 404         | Not Found          | The server cannot find the requested resource.                            | When a specific item or endpoint does not exist.                  |
+| 405         | Method Not Allowed | The request method is not supported for the target resource.              | When using the wrong HTTP method (e.g., GET instead of POST).     |
+| 409         | Conflict           | The request conflicts with the current state of the server.              | For issues like duplicate entries.                               |
+| 422         | Unprocessable Entity| The server understands the request but cannot process it due to semantic errors in the data.                | This is common for Pydantic validation errors.                                  |
+| 500         | Internal Server Error| The server encountered an unexpected condition.                          | For unhandled exceptions in your code (e.g., a ZeroDivisionError). |
+</details>
