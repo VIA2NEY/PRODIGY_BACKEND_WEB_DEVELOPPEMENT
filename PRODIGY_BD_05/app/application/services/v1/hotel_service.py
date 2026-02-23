@@ -1,7 +1,7 @@
 import uuid
 
 from fastapi import HTTPException
-from app.api.v1.schemas.hotel_schema import HotelCreate, HotelUpdate
+from app.api.v1.schemas.hotel_schema import HotelCreate, HotelResponse, HotelUpdate
 from app.infrastructure.repositories.hotel_repository import HotelRepository
 from app.domain.models.hotels import Hotel
 from sqlalchemy.orm import Session
@@ -51,7 +51,12 @@ class HotelService:
 
         hotels = self.repo.get_all(db)
 
-        self.cache.set(cache_key, hotels)
+        serialized_cache_response = [
+            HotelResponse.model_validate(h).model_dump()
+            for h in hotels
+        ]
+
+        self.cache.set(cache_key, serialized_cache_response)
         return hotels
     
     def list_by_owner(self, db: Session, owner_id):

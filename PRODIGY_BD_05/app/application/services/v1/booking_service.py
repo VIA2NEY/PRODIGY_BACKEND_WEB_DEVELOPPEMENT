@@ -5,12 +5,14 @@ from app.domain.models.booking import Booking
 from app.infrastructure.repositories.booking_repository import BookingRepository
 from app.infrastructure.repositories.room_repository import RoomRepository
 from app.api.v1.schemas.booking_schema import BookingCreate
+from app.application.services.v1.cache_service import CacheService
 
 
 class BookingService:
     def __init__(self, booking_repo: BookingRepository, room_repo: RoomRepository):
         self.booking_repo = booking_repo
         self.room_repo = room_repo
+        self.cache = CacheService()
 
     def create(self, db: Session, user_id: str, data: BookingCreate):
         room = self.room_repo.get_by_id(db, data.room_id)
@@ -42,6 +44,8 @@ class BookingService:
             status="confirmed",
         )
 
+        self.cache.invalidate_pattern("rooms:*")
+
         return self.booking_repo.create(db, booking)
 
     def cancel(self, db: Session, booking_id: str, user_id: str):
@@ -52,6 +56,8 @@ class BookingService:
 
         if str(booking.user_id) != user_id:
             raise HTTPException(status_code=403, detail="Not your booking")
+
+        self.cache.invalidate_pattern("rooms:*")
 
         booking.status = "cancelled"
         return self.booking_repo.update(db, booking)

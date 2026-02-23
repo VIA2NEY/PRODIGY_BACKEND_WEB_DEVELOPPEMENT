@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from app.domain.models.rooms import Room
 from app.infrastructure.repositories.room_repository import RoomRepository
 from app.infrastructure.repositories.hotel_repository import HotelRepository
-from app.api.v1.schemas.room_schema import RoomCreate, RoomUpdate
+from app.api.v1.schemas.room_schema import RoomCreate, RoomResponse, RoomUpdate
 from app.application.services.v1.cache_service import CacheService
 
 
@@ -76,7 +76,12 @@ class RoomService:
 
         rooms = self.room_repo.get_all_available_rooms(db)
 
-        self.cache.set(cache_key, rooms)
+        serialized_cache_response = [
+            RoomResponse.model_validate(r).model_dump()
+            for r in rooms
+        ]
+
+        self.cache.set(cache_key, serialized_cache_response)
 
         return rooms
 
@@ -90,7 +95,12 @@ class RoomService:
 
         rooms = self.room_repo.get_all_rooms_by_hotel_id(db, uuid.UUID(hotel_id))
 
-        self.cache.set(cache_key, rooms)
+        serialized_cache_response = [
+            RoomResponse.model_validate(r).model_dump()
+            for r in rooms
+        ]
+
+        self.cache.set(cache_key, serialized_cache_response)
 
         return rooms
 
@@ -126,6 +136,11 @@ class RoomService:
 
         rooms = self.room_repo.get_available_by_date(db, check_in, check_out)
 
-        self.cache.set(cache_key, rooms, ttl=60)  # TTL plus court
+        serialized_cache_response = [
+            RoomResponse.model_validate(r).model_dump()
+            for r in rooms
+        ]
+
+        self.cache.set(cache_key, serialized_cache_response, ttl=60)  # TTL plus court
 
         return rooms
