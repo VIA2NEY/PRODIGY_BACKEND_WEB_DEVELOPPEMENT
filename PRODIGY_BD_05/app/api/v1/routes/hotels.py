@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.api.v1.dependencies import get_hotel_service_v1
+from app.application.services.v1.hotel_service import HotelService
 from app.infrastructure.database.session import get_db
 from app.api.v1.schemas.hotel_schema import HotelCreate,HotelDetailResponse, HotelListResponse, HotelUpdate
 from app.core.security import require_roles, get_current_user
@@ -15,8 +16,8 @@ def create_hotel(
     payload: HotelCreate,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    service : HotelService = Depends(get_hotel_service_v1),
 ):
-    service = get_hotel_service_v1()
     hotel = service.create(db, current_user["user_id"], payload)
 
     return HotelDetailResponse(
@@ -31,8 +32,8 @@ def update_hotel(
     payload: HotelUpdate,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
+    service : HotelService = Depends(get_hotel_service_v1),
 ):
-    service = get_hotel_service_v1()
     hotel = service.update(db, hotel_id, current_user["user_id"], payload)
 
     return HotelDetailResponse(
@@ -42,8 +43,8 @@ def update_hotel(
 )
 
 @router.get("", response_model=HotelListResponse)
-def list_hotels(service=Depends(get_hotel_service_v1), db: Session = Depends(get_db)):
-    service = get_hotel_service_v1()
+def list_hotels(service : HotelService = Depends(get_hotel_service_v1), db: Session = Depends(get_db)):
+
     hotel = service.list_all(db)
     return HotelListResponse(
         code=200, 

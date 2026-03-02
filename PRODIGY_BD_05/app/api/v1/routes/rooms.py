@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.api.v1.dependencies import get_room_service_v1
+from app.application.services.v1.room_service import RoomService
 from app.core.security import get_current_user, require_roles
 from app.infrastructure.database.session import get_db
 from app.api.v1.schemas.room_schema import RoomCreate, RoomDetailResponse, RoomListResponse, RoomUpdate
@@ -16,9 +17,9 @@ def create_room(
     hotel_id: str,
     payload: RoomCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
+    service : RoomService = Depends(get_room_service_v1),
 ):
-    service = get_room_service_v1()
     room = service.create(db, hotel_id, current_user["user_id"], payload)
 
     return RoomDetailResponse(

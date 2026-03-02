@@ -1,8 +1,13 @@
+import uuid
+
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 from app.domain.models.booking import Booking
 
 class BookingRepository:
+
+    def get_booking_by_id(self, db: Session, booking_id: str):
+        return db.query(Booking).filter(Booking.id == uuid.UUID(booking_id)).first()
 
     def has_conflict(self, db: Session, room_id, check_in, check_out):
         return db.query(Booking).filter(

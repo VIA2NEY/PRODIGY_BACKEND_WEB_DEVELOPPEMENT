@@ -9,10 +9,10 @@ from app.application.services.v1.cache_service import CacheService
 
 
 class BookingService:
-    def __init__(self, booking_repo: BookingRepository, room_repo: RoomRepository):
+    def __init__(self, booking_repo: BookingRepository, room_repo: RoomRepository, cache: CacheService):
         self.booking_repo = booking_repo
         self.room_repo = room_repo
-        self.cache = CacheService()
+        self.cache = cache
 
     def create(self, db: Session, user_id: str, data: BookingCreate):
         room = self.room_repo.get_by_id(db, data.room_id)
@@ -49,7 +49,7 @@ class BookingService:
         return self.booking_repo.create(db, booking)
 
     def cancel(self, db: Session, booking_id: str, user_id: str):
-        booking = db.query(Booking).filter(Booking.id == uuid.UUID(booking_id)).first()
+        booking = self.booking_repo.get_booking_by_id(db, booking_id)
 
         if not booking:
             raise HTTPException(status_code=404, detail="Booking not found")

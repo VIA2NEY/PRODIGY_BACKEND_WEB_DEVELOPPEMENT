@@ -67,3 +67,15 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=422,
         content=response_format(422, "Validation error", jsonable_encoder(exc.errors())),
     )
+
+
+@app.middleware("http")
+async def add_deprecation_header(request: Request, call_next):
+    response = await call_next(request)
+
+    if request.url.path.startswith("/v1"):
+        response.headers["Deprecation"] = "true"
+        response.headers["Sunset"] = "Wed, 01 Jun 2026 00:00:00 GMT"
+        response.headers["Link"] = "</v2>; rel='successor-version'"
+
+    return response

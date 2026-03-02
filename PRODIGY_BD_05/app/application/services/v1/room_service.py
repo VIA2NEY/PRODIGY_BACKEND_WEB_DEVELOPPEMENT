@@ -9,10 +9,10 @@ from app.application.services.v1.cache_service import CacheService
 
 
 class RoomService:
-    def __init__(self, room_repo: RoomRepository, hotel_repo: HotelRepository):
+    def __init__(self, room_repo: RoomRepository, hotel_repo: HotelRepository, cache: CacheService):
         self.room_repo = room_repo
         self.hotel_repo = hotel_repo
-        self.cache = CacheService()
+        self.cache = cache
 
     def create(self, db: Session, hotel_id: str, owner_id: str, data: RoomCreate):
         hotel = self.hotel_repo.get_by_id(db, uuid.UUID(hotel_id))

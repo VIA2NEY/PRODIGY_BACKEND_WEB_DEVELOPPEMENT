@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from app.application.services.v1.cache_service import CacheService
 
 class HotelService:
-    def __init__(self, repo: HotelRepository):
+    def __init__(self, repo: HotelRepository, cache: CacheService):
         self.repo = repo
-        self.cache = CacheService()
+        self.cache = cache
 
     def create(self, db: Session, owner_id, data: HotelCreate):
         hotel = Hotel(
