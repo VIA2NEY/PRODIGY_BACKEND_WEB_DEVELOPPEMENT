@@ -14,8 +14,8 @@ class BookingService:
         self.room_repo = room_repo
         self.cache = cache
 
-    def create(self, db: Session, user_id: str, data: BookingCreate):
-        room = self.room_repo.get_by_id(db, data.room_id)
+    def create(self, user_id: str, data: BookingCreate):
+        room = self.room_repo.get_by_id(data.room_id)
 
         if not room:
             raise HTTPException(status_code=404, detail="Room not found")
@@ -27,7 +27,6 @@ class BookingService:
             raise HTTPException(status_code=400, detail="Invalid dates")
 
         conflict = self.booking_repo.has_conflict(
-            db,
             data.room_id,
             data.check_in_date,
             data.check_out_date,
@@ -46,10 +45,10 @@ class BookingService:
 
         self.cache.invalidate_pattern("rooms:*")
 
-        return self.booking_repo.create(db, booking)
+        return self.booking_repo.create(booking)
 
-    def cancel(self, db: Session, booking_id: str, user_id: str):
-        booking = self.booking_repo.get_booking_by_id(db, booking_id)
+    def cancel(self, booking_id: str, user_id: str):
+        booking = self.booking_repo.get_booking_by_id(booking_id)
 
         if not booking:
             raise HTTPException(status_code=404, detail="Booking not found")
@@ -60,4 +59,4 @@ class BookingService:
         self.cache.invalidate_pattern("rooms:*")
 
         booking.status = "cancelled"
-        return self.booking_repo.update(db, booking)
+        return self.booking_repo.update(booking)

@@ -9,8 +9,8 @@ class AuthService:
     def __init__(self, user_repo: UserRepository):
         self.user_repo = user_repo
 
-    def register(self, db: Session, email: str, password: str, role: str):
-        if self.user_repo.get_by_email(db, email):
+    def register(self, email: str, password: str, role: str):
+        if self.user_repo.get_by_email(email):
             raise_exception(409, f"User with email {email} already exists")
 
         user = User(
@@ -18,11 +18,11 @@ class AuthService:
             hashed_password=get_password_hash(password),
             role=role
         )
-        return self.user_repo.create(db, user)
+        return self.user_repo.create(user)
 
 
-    def login(self, db: Session, payload: LoginRequest):
-        user = self.user_repo.get_by_email(db, payload.email)
+    def login(self, payload: LoginRequest):
+        user = self.user_repo.get_by_email(payload.email)
         if not user:
             return None
 
