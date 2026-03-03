@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from app.api.v1.dependencies import get_booking_service_v1
 from app.application.services.v1.booking_service import BookingService
 from app.infrastructure.repositories.booking_repository import BookingRepository
 from app.infrastructure.database.session import get_db
@@ -9,9 +10,6 @@ from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/bookings", tags=["Bookings"])
 
-def get_booking_service():
-    return BookingService(BookingRepository(), RoomRepository())
-
 
 @router.post("", response_model=BookingDetailResponse, dependencies=[Depends(require_roles("user", "owner", "admin"))])
 def create_booking(
@@ -19,7 +17,7 @@ def create_booking(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    service = get_booking_service()
+    service = get_booking_service_v1()
     booking = service.create(db, current_user["user_id"], payload)
 
     return BookingDetailResponse(
@@ -28,13 +26,13 @@ def create_booking(
         data=booking
     )
 
-@router.patch("/{booking_id}/cancel", response_model=BookingDetailResponse, dependencies=[Depends(require_roles("user"))])
+@router.patch("/{booking_id}/cancel", response_model=BookingDetailResponse, dependencies=[Depends(require_roles("user", "owner", "admin"))])
 def cancel_booking(
     booking_id: str,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
-    service = get_booking_service()
+    service = get_booking_service_v1()
     booking = service.cancel(db, booking_id, current_user["user_id"])
 
     return BookingDetailResponse(
@@ -49,7 +47,7 @@ def cancel_booking(
 #     db: Session = Depends(get_db),
 #     current_user=Depends(get_current_user),
 # ):
-#     service = get_booking_service()
+#     service = get_booking_service_v1()
 #     booking = service.confirm(db, booking_id, current_user["user_id"])
 
 #     return BookingDetailResponse(
