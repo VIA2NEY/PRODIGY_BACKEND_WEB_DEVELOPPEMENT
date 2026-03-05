@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr
 from uuid import UUID
 from datetime import datetime
 
-from app.utils.response import ApiResponse
+from app.api.base_responses.response import ApiResponse
 
 class UserCreate(BaseModel):
     email: EmailStr

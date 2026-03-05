@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.api.v1.dependencies import get_auth_service_v1
 from app.api.v1.schemas.auth_shema import LoginRequest, RegisterDetailResponse, TokenDetailResponse, UserRole
 from app.application.services.v1.auth_service import AuthService
-from app.utils.response import ApiResponse
+from app.api.base_responses.response import ApiResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 

@@ -3,7 +3,7 @@ from pydantic import BaseModel, ConfigDict, field_validator
 from uuid import UUID
 from datetime import date, datetime
 
-from app.utils.response import ApiResponse
+from app.api.base_responses.response import ApiResponse
 
 class BookingCreate(BaseModel):
     room_id: UUID

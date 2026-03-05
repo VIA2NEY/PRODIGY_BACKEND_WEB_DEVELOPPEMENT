@@ -84,6 +84,19 @@ This project builds upon previous tasks by introducing more complex business log
 
 # APP ARCHITECTURE
 
+1. Principe
+
+```
+Route
+  ↓ serialization
+Service
+  ↓ logique métier
+Repository
+  ↓ database
+```
+
+2. Architecture
+
 ```
 ├── alembic/ 
 │   ├── env.py

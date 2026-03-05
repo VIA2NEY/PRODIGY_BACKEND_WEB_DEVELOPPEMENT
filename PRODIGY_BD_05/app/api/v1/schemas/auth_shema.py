@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 
 from app.api.v1.schemas.user_schema import UserResponse
-from app.utils.response import ApiResponse
+from app.api.base_responses.response import ApiResponse
 from enum import Enum
 
 class UserRole(str, Enum):
